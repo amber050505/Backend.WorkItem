@@ -4,7 +4,7 @@ using Moq;
 
 namespace Backend.WorkItem.Test
 {
-    public class WorkItemServiceTests
+    public class ServiceReturnIdTest
     {
         private Mock<IWorkItemRepository> _mockRepo;
         private WorkItemService _service;
@@ -17,10 +17,10 @@ namespace Backend.WorkItem.Test
         }
 
         [Test]
-        public async Task Test1()
+        public async Task ServiceReturnId()
         {
             var workItem = new Model.WorkItem { Title = "Test Title" };
-            _mockRepo.Setup(repo => repo.CreateAsync(It.IsAny<Model.WorkItem>())).ReturnsAsync(100);
+            _mockRepo.Setup(repo => repo.CreateAsync(It.Is<Model.WorkItem>(item => item.Title != ""))).ReturnsAsync(100);
 
             var workItemId = await _service.CreateAsync(workItem);
             Assert.That(workItemId, Is.EqualTo(100));
