@@ -11,9 +11,9 @@ namespace Backend.WorkItem.Repository.WorkItem
     public class WorkItemRepository : IWorkItemRepository
     {
         private readonly IConnectionString _connStr;
-        public WorkItemRepository(IConnectionString config)
+        public WorkItemRepository(IConnectionString connStr)
         {
-            _connStr = config;
+            _connStr = connStr;
         }
 
         private IDbConnection CreateConnection() => new SqlConnection(_connStr.DBConnString);
