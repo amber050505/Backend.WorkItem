@@ -1,0 +1,30 @@
+﻿@using Backend.WorkItem.Model
+@model WorkItem
+@{
+    ViewData["Title"] = "編輯 Work Item";
+}
+<div class="container">
+    <h2>編輯 Work Item</h2>
+    @Html.ValidationSummary(excludePropertyErrors: true, message: "", htmlAttributes: new { @class = "text-danger" })
+    <form asp-action="Update" asp-route-id="@Model.Id" asp-controller="WorkItem" method="post" id="editForm">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label>標題</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>描述</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">儲存</button>
+        <a class="btn btn-secondary" href="/admin/work-items">返回</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+}

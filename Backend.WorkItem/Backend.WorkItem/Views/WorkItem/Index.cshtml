@@ -1,0 +1,57 @@
+﻿@using Backend.WorkItem.Model
+@model IEnumerable<WorkItem>
+@{
+    ViewData["Title"] = "Work Items";
+}
+<div class="container">
+    <h2>Work Items</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <a class="btn btn-primary" href="/admin/work-items/new">新增項目</a>
+
+    <table class="table mt-3">
+        <thead>
+            <tr><th>編號</th><th>標題</th><th>描述</th><th>建立時間</th><th>動作</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="row-@item.Id">
+                    <td>@item.Id</td>
+                    <td>@item.Title</td>
+                    <td>@(item.Description?.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)</td>
+                    <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        <a class="btn btn-sm btn-secondary" href="/admin/work-items/@item.Id/edit">編輯</a>
+                        <form class="d-inline delete-form" method="post" action="/admin/work-items/@item.Id/delete">
+                            @Html.AntiForgeryToken()
+                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="@item.Id">刪除</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function(){
+            $('.btn-delete').on('click', function(){
+                if(!confirm('確定要刪除此項目嗎？')) return;
+                var btn = $(this);
+                var form = btn.closest('form');
+                form.submit();
+            });
+        });
+    </script>
+}
