@@ -1,4 +1,6 @@
-﻿using Backend.WorkItem.Repository.WorkItem.Interface;
+﻿using Backend.WorkItem.Repository.Utility;
+using Backend.WorkItem.Repository.Utility.Interface;
+using Backend.WorkItem.Repository.WorkItem.Interface;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -8,13 +10,13 @@ namespace Backend.WorkItem.Repository.WorkItem
 {
     public class WorkItemRepository : IWorkItemRepository
     {
-        private readonly string _connStr;
-        public WorkItemRepository(IConfiguration config)
+        private readonly IConnectionString _connStr;
+        public WorkItemRepository(IConnectionString config)
         {
-            _connStr = config.GetConnectionString("DefaultConnection");
+            _connStr = config;
         }
 
-        private IDbConnection CreateConnection() => new SqlConnection(_connStr);
+        private IDbConnection CreateConnection() => new SqlConnection(_connStr.DBConnString);
 
         public async Task<IEnumerable<Model.WorkItem>> GetAllAsync()
         {
@@ -32,7 +34,7 @@ namespace Backend.WorkItem.Repository.WorkItem
         {
             using var db = CreateConnection();
             var newId = await db.ExecuteScalarAsync<int>(
-                "dbo.sp_WorkItem_Create",
+                "dbo.sp_WorkItem_Merge",
                 new { item.Title, item.Description },
                 commandType: CommandType.StoredProcedure);
             return newId;
@@ -42,7 +44,7 @@ namespace Backend.WorkItem.Repository.WorkItem
         {
             using var db = CreateConnection();
             var rows = await db.ExecuteScalarAsync<int>(
-                "dbo.sp_WorkItem_Update",
+                "dbo.sp_WorkItem_Merge",
                 new { item.Id, item.Title, item.Description },
                 commandType: CommandType.StoredProcedure);
             return rows > 0;
