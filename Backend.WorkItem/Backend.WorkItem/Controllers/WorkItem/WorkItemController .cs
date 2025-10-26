@@ -9,23 +9,23 @@ namespace Backend.WorkItem.Controllers.WorkItem
         private readonly IWorkItemService _service;
         public WorkItemController(IWorkItemService service) => _service = service;
 
-        // List: GET /WorkItem
-        [HttpGet("")]
+        // List: GET /WorkItem/List
+        [HttpGet("List")]
         public async Task<IActionResult> Index()
         {
             var items = await _service.GetAllAsync();
-            return View("Index", items);
+            return View("List", items);
         }
 
-        // New form: GET /WorkItem/new
-        [HttpGet("new")]
+        // New: GET /WorkItem
+        [HttpGet()]
         public IActionResult New()
         {
             return View("New", new Model.WorkItem ());
         }
 
-        // Create: POST /WorkItem/new
-        [HttpPost("new")]
+        // Create: POST /WorkItem
+        [HttpPost()]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Model.WorkItem model)
         {
@@ -35,11 +35,11 @@ namespace Backend.WorkItem.Controllers.WorkItem
             }
             var newId = await _service.CreateAsync(model);
             TempData["SuccessMessage"] = "新增成功";
-            return RedirectToAction("Index");
+            return RedirectToAction("List");
         }
 
-        // Edit form: GET /WorkItem/{id}/edit
-        [HttpGet("{id:int}/edit")]
+        // Edit: GET /WorkItem/{id}
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> Edit(int id)
         {
             var item = await _service.GetByIdAsync(id);
@@ -47,28 +47,24 @@ namespace Backend.WorkItem.Controllers.WorkItem
             return View("Edit", item);
         }
 
-        // Update: POST /WorkItem/{id}/edit
-        [HttpPost("{id:int}/edit")]
+        // Update: PUT /WorkItem/{id}
+        [HttpPut("{id:int}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, Model.WorkItem model)
         {
             if (!ModelState.IsValid)
-            {
-                return View("Edit", model);
-            }
+                return BadRequest(ModelState);
+
             model.Id = id;
             var isUpdate = await _service.UpdateAsync(model);
             if (!isUpdate)
-            {
-                ModelState.AddModelError("", "更新失敗");
-                return View("Edit", model);
-            }
-            TempData["SuccessMessage"] = "更新成功";
-            return RedirectToAction("Index");
+                return BadRequest("更新失敗");
+
+            return Ok();
         }
 
-        // Delete: POST /WorkItem/{id}/delete
-        [HttpPost("{id:int}/delete")]
+        // Delete: Delete /WorkItem/{id}
+        [HttpDelete("{id:int}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {

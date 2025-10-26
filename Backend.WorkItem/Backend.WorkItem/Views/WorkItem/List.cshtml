@@ -15,7 +15,7 @@
         <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
     }
 
-    <a class="btn btn-primary" href="/WorkItem/new">新增項目</a>
+    <a class="btn btn-primary" href="/WorkItem">新增項目</a>
     @Html.AntiForgeryToken()
     <table class="table mt-3">
         <thead>
@@ -30,7 +30,7 @@
                     <td>@(item.Description?.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)</td>
                     <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                     <td>
-                        <a class="btn btn-sm btn-secondary" href="/WorkItem/@item.Id/edit">編輯</a>
+                        <a class="btn btn-sm btn-secondary" href="/WorkItem/@item.Id">編輯</a>
                         <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="@item.Id">刪除</button>
                     </td>
                 </tr>
@@ -49,8 +49,8 @@ $(function () {
 
         const token = $('input[name="__RequestVerificationToken"]').val();
         $.ajax({
-            url: `/WorkItem/${id}/delete`, // 刪除 API
-            type: 'POST',
+            url: `/WorkItem/${id}`,
+            type: 'DELETE',
             headers: {
                 'RequestVerificationToken': token
             },
