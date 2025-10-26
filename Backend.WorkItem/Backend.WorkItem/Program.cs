@@ -1,3 +1,8 @@
+using Backend.WorkItem.Repository.WorkItem.Interface;
+using Backend.WorkItem.Repository.WorkItem;
+using Backend.WorkItem.Service.WorkItem.Interface;
+using Backend.WorkItem.Service.WorkItem;
+
 namespace Backend.WorkItem
 {
     public class Program
@@ -8,6 +13,8 @@ namespace Backend.WorkItem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
+            builder.Services.AddScoped<IWorkItemService, WorkItemService>();
 
             var app = builder.Build();
 
