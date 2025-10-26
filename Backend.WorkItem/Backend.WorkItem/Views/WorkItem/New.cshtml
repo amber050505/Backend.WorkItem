@@ -6,7 +6,6 @@
 <div class="container">
     <h2>新增 Work Item</h2>
     <form asp-action="Create" asp-controller="WorkItem" method="post" id="newForm">
-        @Html.AntiForgeryToken()
         <div class="form-group">
             <label>標題</label>
             <input asp-for="Title" class="form-control" />
@@ -18,7 +17,7 @@
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
         <button type="submit" class="btn btn-primary">送出</button>
-        <a class="btn btn-secondary" href="/admin/work-items">返回</a>
+        <a class="btn btn-secondary" href="/WorkItem">返回</a>
     </form>
 </div>
 
