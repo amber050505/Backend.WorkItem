@@ -3,28 +3,28 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.WorkItem.Controllers.WorkItem
 {
-    [Route("admin/work-items")]
+    [Route("admin/work-item")]
     public class WorkItemController : Controller
     {
         private readonly IWorkItemService _service;
         public WorkItemController(IWorkItemService service) => _service = service;
 
-        // List: GET /admin/work-items
+        // List: GET /admin/work-item
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
             var items = await _service.GetAllAsync();
-            return View("Index", items); // Views/Admin/WorkItems/Index.cshtml
+            return View("Index", items);
         }
 
-        // New form: GET /admin/work-items/new
+        // New form: GET /admin/work-item/new
         [HttpGet("new")]
         public IActionResult New()
         {
             return View("New", new Model.WorkItem ());
         }
 
-        // Create: POST /admin/work-items/new
+        // Create: POST /admin/work-item/new
         [HttpPost("new")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Model.WorkItem model)
@@ -38,7 +38,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
             return RedirectToAction("Index");
         }
 
-        // Edit form: GET /admin/work-items/{id}/edit
+        // Edit form: GET /admin/work-item/{id}/edit
         [HttpGet("{id:int}/edit")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -47,7 +47,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
             return View("Edit", item);
         }
 
-        // Update: POST /admin/work-items/{id}/edit
+        // Update: POST /admin/work-item/{id}/edit
         [HttpPost("{id:int}/edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, Model.WorkItem model)
@@ -67,7 +67,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
             return RedirectToAction("Index");
         }
 
-        // Delete: POST /admin/work-items/{id}/delete
+        // Delete: POST /admin/work-item/{id}/delete
         [HttpPost("{id:int}/delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
