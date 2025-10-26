@@ -15,4 +15,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Backend.WorkItem.Model\Backend.WorkItem.Model.csproj" />
+    <ProjectReference Include="..\Backend.WorkItem.Service\Backend.WorkItem.Service.csproj" />
+  </ItemGroup>
+
 </Project>

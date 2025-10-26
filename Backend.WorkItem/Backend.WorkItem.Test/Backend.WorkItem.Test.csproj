@@ -18,6 +18,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Backend.WorkItem.Model\Backend.WorkItem.Model.csproj" />
+    <ProjectReference Include="..\Backend.WorkItem.Repository\Backend.WorkItem.Repository.csproj" />
+    <ProjectReference Include="..\Backend.WorkItem.Service\Backend.WorkItem.Service.csproj" />
+    <ProjectReference Include="..\Backend.WorkItem\Backend.WorkItem.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="NUnit.Framework" />
   </ItemGroup>
 
