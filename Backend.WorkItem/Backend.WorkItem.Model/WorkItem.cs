@@ -10,7 +10,7 @@ namespace Backend.WorkItem.Model
         [StringLength(200)]
         public string Title { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
