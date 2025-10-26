@@ -73,11 +73,10 @@ namespace Backend.WorkItem.Controllers.WorkItem
         public async Task<IActionResult> Delete(int id)
         {
             var isDelete = await _service.DeleteAsync(id);
-            if (isDelete)
-                TempData["SuccessMessage"] = "刪除成功";
-            else
-                TempData["ErrorMessage"] = "刪除失敗";
-            return RedirectToAction("Index");
+            if (!isDelete)
+                return BadRequest("刪除失敗");
+
+            return Ok();
         }
     }
 }

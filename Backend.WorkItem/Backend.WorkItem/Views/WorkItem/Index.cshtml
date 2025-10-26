@@ -15,8 +15,8 @@
         <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
     }
 
-    <a class="btn btn-primary" href="/admin/work-items/new">新增項目</a>
-
+    <a class="btn btn-primary" href="/WorkItem/new">新增項目</a>
+    @Html.AntiForgeryToken()
     <table class="table mt-3">
         <thead>
             <tr><th>編號</th><th>標題</th><th>描述</th><th>建立時間</th><th>動作</th></tr>
@@ -31,9 +31,7 @@
                     <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                     <td>
                         <a class="btn btn-sm btn-secondary" href="/WorkItem/@item.Id/edit">編輯</a>
-                        <form class="d-inline delete-form" method="post" action="/WorkItem/@item.Id/delete">
-                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="@item.Id">刪除</button>
-                        </form>
+                        <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="@item.Id">刪除</button>
                     </td>
                 </tr>
             }
@@ -42,14 +40,29 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(function(){
-            $('.btn-delete').on('click', function(){
-                if(!confirm('確定要刪除此項目嗎？')) return;
-                var btn = $(this);
-                var form = btn.closest('form');
-                form.submit();
-            });
+<script>
+$(function () {
+    $('.btn-delete').on('click', function () {
+        const btn = $(this);
+        const id = $(this).data('id');
+        if (!confirm('確定要刪除此項目嗎？')) return;
+
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            url: `/WorkItem/${id}/delete`, // 刪除 API
+            type: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function () {
+                alert('刪除成功');
+                btn.closest('tr').remove();
+            },
+            error: function (xhr) {
+                alert(xhr.responseText);
+            }
         });
-    </script>
+    });
+});
+</script>
 }
