@@ -1,7 +1,9 @@
-using Backend.WorkItem.Repository.WorkItem.Interface;
+using Backend.WorkItem.Repository.Utility;
+using Backend.WorkItem.Repository.Utility.Interface;
 using Backend.WorkItem.Repository.WorkItem;
-using Backend.WorkItem.Service.WorkItem.Interface;
+using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem;
+using Backend.WorkItem.Service.WorkItem.Interface;
 
 namespace Backend.WorkItem
 {
@@ -15,6 +17,7 @@ namespace Backend.WorkItem
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
             builder.Services.AddScoped<IWorkItemService, WorkItemService>();
+            builder.Services.AddScoped<IConnectionString, ConnectionString>();
 
             var app = builder.Build();
 
