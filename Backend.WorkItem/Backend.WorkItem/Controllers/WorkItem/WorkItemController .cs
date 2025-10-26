@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.WorkItem.Controllers.WorkItem
 {
-    [Route("WorkItem")]
+    [Route("[controller]")]
     public class WorkItemController : Controller
     {
         private readonly IWorkItemService _service;
