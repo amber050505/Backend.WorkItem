@@ -11,7 +11,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
 
         // List: GET /WorkItem/List
         [HttpGet("List")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> List()
         {
             var items = await _service.GetAllAsync();
             return View("List", items);
