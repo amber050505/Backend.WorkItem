@@ -44,7 +44,7 @@
 $(function () {
     $('.btn-delete').on('click', function () {
         const btn = $(this);
-        const id = $(this).data('id');
+        const id = btn.data('id');
         if (!confirm('確定要刪除此項目嗎？')) return;
 
         const token = $('input[name="__RequestVerificationToken"]').val();
