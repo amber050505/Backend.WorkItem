@@ -4,7 +4,7 @@ using Moq;
 
 namespace Backend.WorkItem.Test
 {
-    public class ServiceReturnIdTest
+    public class ServiceReturnNewIdTest
     {
         private Mock<IWorkItemRepository> _mockRepo;
         private WorkItemService _service;
