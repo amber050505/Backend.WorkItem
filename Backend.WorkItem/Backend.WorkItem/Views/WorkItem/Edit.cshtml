@@ -28,6 +28,11 @@
 $(function(){
     $('#editForm').on('submit', function (e) {
         e.preventDefault();
+
+        if(!($('form').valid())){
+            return
+        }
+
         const id = $(this).find('[type=submit]').data('id');
         const token = $('input[name="__RequestVerificationToken"]').val();
         const data = $(this).serialize();
