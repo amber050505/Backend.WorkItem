@@ -10,7 +10,7 @@
 
   * **標題 (Title)**：必填欄位
   * **說明 (Description)**：選填欄位
-* 系統支援 **Swagger UI** 顯示 API 之 Request / Response 範例，方便開發與測試
+* 系統支援 **Swagger UI** 可視化展示 API 參數與呼叫方式（HTTP Method），並可直接在頁面上進行測試。
 * 提供 **NUnit 單元測試**，確保主要功能的正確性與穩定性
 
 ---
