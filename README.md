@@ -22,7 +22,7 @@
 | 層級                        | 功能說明                                           |
 | ------------------------- | ---------------------------------------------- |
 | **Controller**            | 負責接收使用者的 **HTTP 請求**，根據情境決定回應方式：<br>－ 若為網頁操作，則回傳 **MVC View 頁面**<br>－ 若為前端 AJAX 呼叫，則以 **RESTful API** 格式回傳 **HTTP 狀態碼            |
-| **Service**               | 責任處理商業邏輯                                           |
+| **Service**               | 負責處理商業邏輯                                           |
 | **Repository**            | 使用 Dapper 與 MSSQL 互動（透過 Stored Procedure 存取資料） |
 | **View (Razor + jQuery)** | 顯示列表、表單、提示訊息，並透過 Ajax 與後端溝通                    |
 
