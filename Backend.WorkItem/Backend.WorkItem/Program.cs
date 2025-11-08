@@ -4,6 +4,7 @@ using Backend.WorkItem.Repository.WorkItem;
 using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem;
 using Backend.WorkItem.Service.WorkItem.Interface;
+using StackExchange.Redis;
 
 namespace Backend.WorkItem
 {
@@ -17,6 +18,11 @@ namespace Backend.WorkItem
             builder.Services.AddControllersWithViews();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var config = builder.Configuration.GetConnectionString("Redis");
+                return ConnectionMultiplexer.Connect(config!);
+            });
             builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
             builder.Services.AddScoped<IWorkItemService, WorkItemService>();
             builder.Services.AddScoped<IConnectionString, ConnectionString>();

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Backend.WorkItem.Model\Backend.WorkItem.Model.csproj" />
     <ProjectReference Include="..\Backend.WorkItem.Repository\Backend.WorkItem.Repository.csproj" />
   </ItemGroup>

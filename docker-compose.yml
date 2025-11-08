@@ -11,5 +11,15 @@ services:
     volumes:
       - mssql-data:/var/opt/mssql
 
+  redis:
+    image: redis:7.4
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
 volumes:
   mssql-data:
+  redis-data:
