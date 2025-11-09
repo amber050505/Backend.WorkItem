@@ -27,13 +27,13 @@ namespace Backend.WorkItem.Test
         public async Task Create_WorkItem_RedirectToListWithSuccessMessage()
         {
             var model = new Model.WorkItem { Title = "Test Title" };
-            _mockService.Setup(service => service.CreateAsync(It.Is<Model.WorkItem>(item => item.Title != ""))).ReturnsAsync(100);
+            _mockService.Setup(service => service.CreateAsync(It.Is<Model.WorkItem>(item => item.Title != "")));
 
             var result = await _controller.Create(model) as RedirectToActionResult;
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result!.ActionName, Is.EqualTo("List"));
-            Assert.That(_controller.TempData["SuccessMessage"], Is.EqualTo("新增成功"));
+            Assert.That(_controller.TempData["SuccessMessage"], Is.EqualTo("已送出新增請求（由背景服務寫入）"));
         }
 
         [TearDown]
