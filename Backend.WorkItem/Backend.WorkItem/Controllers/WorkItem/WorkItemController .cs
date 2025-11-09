@@ -21,20 +21,20 @@ namespace Backend.WorkItem.Controllers.WorkItem
         [HttpGet()]
         public IActionResult New()
         {
-            return View("New", new Model.WorkItem ());
+            return View("New", new Model.WorkItem());
         }
 
         // Create: POST /WorkItem
         [HttpPost()]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Model.WorkItem model)
         {
             if (!ModelState.IsValid)
             {
                 return View("New", model);
             }
-            var newId = await _service.CreateAsync(model);
-            TempData["SuccessMessage"] = "新增成功";
+            await _service.CreateAsync(model);
+            TempData["SuccessMessage"] = "已送出新增請求（由背景服務寫入）";
             return RedirectToAction("List");
         }
 

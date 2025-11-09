@@ -1,9 +1,11 @@
+using Backend.WorkItem.BackgroundServices;
 using Backend.WorkItem.Repository.Utility;
 using Backend.WorkItem.Repository.Utility.Interface;
 using Backend.WorkItem.Repository.WorkItem;
 using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem;
 using Backend.WorkItem.Service.WorkItem.Interface;
+using Confluent.Kafka;
 using StackExchange.Redis;
 
 namespace Backend.WorkItem
@@ -23,9 +25,19 @@ namespace Backend.WorkItem
                 var config = builder.Configuration.GetConnectionString("Redis");
                 return ConnectionMultiplexer.Connect(config!);
             });
+            builder.Services.AddSingleton<IProducer<Null, string>>(sp =>
+            {
+                var kafkaBootstrap = builder.Configuration["Kafka:BootstrapServers"];
+                var config = new ProducerConfig
+                {
+                    BootstrapServers = kafkaBootstrap
+                };
+                return new ProducerBuilder<Null, string>(config).Build();
+            });
             builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
             builder.Services.AddScoped<IWorkItemService, WorkItemService>();
             builder.Services.AddScoped<IConnectionString, ConnectionString>();
+            builder.Services.AddHostedService<WorkItemKafkaConsumer>();
 
             var app = builder.Build();
 

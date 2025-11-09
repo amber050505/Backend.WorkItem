@@ -1,5 +1,6 @@
 ﻿using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem.Interface;
+using Confluent.Kafka;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -9,13 +10,18 @@ namespace Backend.WorkItem.Service.WorkItem
     {
         private readonly IWorkItemRepository _repo;
         private readonly IDatabase _redis;
+        private readonly IProducer<Null, string> _producer;
 
         private const string CacheListKey = "WorkItems:List";
 
-        public WorkItemService(IWorkItemRepository repo, IConnectionMultiplexer redis)
+        public WorkItemService(
+            IWorkItemRepository repo, 
+            IConnectionMultiplexer redis,
+            IProducer<Null,string> producer)
         {
             _repo = repo;
             _redis = redis.GetDatabase();
+            _producer = producer;
         }
 
         public async Task<IEnumerable<Model.WorkItem>> GetAllAsync()
@@ -56,15 +62,20 @@ namespace Backend.WorkItem.Service.WorkItem
             return item;
         }
 
-        public async Task<int> CreateAsync(Model.WorkItem item)
+        public async Task CreateAsync(Model.WorkItem item)
         {
             item.Title = item.Title!.Trim();
 
-            var newId = await _repo.CreateAsync(item);
+            var msg = new Model.WorkItemKafkaMessage
+            {
+                Operation = "create",
+                Title = item.Title,
+                Description = item.Description
+            };
+
+            await PublishAsync("workitem-events", msg);
 
             await _redis.KeyDeleteAsync(CacheListKey);
-
-            return newId;
         }
 
         public async Task<bool> UpdateAsync(Model.WorkItem item)
@@ -87,6 +98,12 @@ namespace Backend.WorkItem.Service.WorkItem
             await _redis.KeyDeleteAsync($"WorkItems:{id}");
 
             return isDelete;
+        }
+
+        private async Task PublishAsync(string topic, Model.WorkItemKafkaMessage msg)
+        {
+            var json= JsonSerializer.Serialize(msg);
+            await _producer.ProduceAsync(topic, new Message<Null, string> { Value = json }); 
         }
     }
 }
