@@ -6,7 +6,6 @@ using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem;
 using Backend.WorkItem.Service.WorkItem.Interface;
 using Confluent.Kafka;
-using StackExchange.Redis;
 
 namespace Backend.WorkItem
 {
