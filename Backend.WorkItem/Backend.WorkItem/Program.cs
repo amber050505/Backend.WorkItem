@@ -30,9 +30,9 @@ namespace Backend.WorkItem
                 };
                 return new ProducerBuilder<Null, string>(config).Build();
             });
+            builder.Services.AddSingleton<IConnectionString, ConnectionString>();
             builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
             builder.Services.AddScoped<IWorkItemService, WorkItemService>();
-            builder.Services.AddScoped<IConnectionString, ConnectionString>();
             builder.Services.AddHostedService<WorkItemKafkaConsumer>();
 
             var app = builder.Build();
