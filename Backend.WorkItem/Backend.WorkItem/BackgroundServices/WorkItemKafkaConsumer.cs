@@ -1,4 +1,5 @@
-﻿using Backend.WorkItem.Repository.WorkItem.Interface;
+﻿using Backend.WorkItem.Repository.Utility.Interface;
+using Backend.WorkItem.Repository.WorkItem.Interface;
 using Confluent.Kafka;
 using StackExchange.Redis;
 using System.Text.Json;
@@ -8,7 +9,7 @@ namespace Backend.WorkItem.BackgroundServices
     public class WorkItemKafkaConsumer : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IConnectionMultiplexer _redis;
+        private readonly IRedisConnection _redis;
         private readonly ConsumerConfig _config;
 
         private const string Topic = "workitem-events";
@@ -16,7 +17,7 @@ namespace Backend.WorkItem.BackgroundServices
 
         public WorkItemKafkaConsumer(
             IServiceProvider serviceProvider,
-            IConnectionMultiplexer redis,
+            IRedisConnection redis,
             IConfiguration configuration)
         {
             _serviceProvider = serviceProvider;
@@ -37,7 +38,7 @@ namespace Backend.WorkItem.BackgroundServices
                 using var consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
                 consumer.Subscribe(Topic);
 
-                var db = _redis.GetDatabase();
+                var db = _redis.Database;
 
                 while (!stoppingToken.IsCancellationRequested)
                 {

@@ -20,11 +20,7 @@ namespace Backend.WorkItem
             builder.Services.AddControllersWithViews();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-            {
-                var config = builder.Configuration.GetConnectionString("Redis");
-                return ConnectionMultiplexer.Connect(config!);
-            });
+            builder.Services.AddSingleton<IRedisConnection, RedisConnection>();
             builder.Services.AddSingleton<IProducer<Null, string>>(sp =>
             {
                 var kafkaBootstrap = builder.Configuration["Kafka:BootstrapServers"];

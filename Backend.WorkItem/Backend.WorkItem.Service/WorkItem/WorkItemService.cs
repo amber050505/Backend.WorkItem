@@ -1,4 +1,5 @@
-﻿using Backend.WorkItem.Repository.WorkItem.Interface;
+﻿using Backend.WorkItem.Repository.Utility.Interface;
+using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem.Interface;
 using Confluent.Kafka;
 using StackExchange.Redis;
@@ -15,12 +16,12 @@ namespace Backend.WorkItem.Service.WorkItem
         private const string CacheListKey = "WorkItems:List";
 
         public WorkItemService(
-            IWorkItemRepository repo, 
-            IConnectionMultiplexer redis,
+            IWorkItemRepository repo,
+            IRedisConnection redis,
             IProducer<Null,string> producer)
         {
             _repo = repo;
-            _redis = redis.GetDatabase();
+            _redis = redis.Database;
             _producer = producer;
         }
 
