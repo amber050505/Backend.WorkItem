@@ -49,16 +49,14 @@ namespace Backend.WorkItem.Controllers.WorkItem
 
         // Update: PUT /WorkItem/{id}
         [HttpPut("{id:int}")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(int id, Model.WorkItem model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest();
 
             model.Id = id;
-            var isUpdate = await _service.UpdateAsync(model);
-            if (!isUpdate)
-                return BadRequest("更新失敗");
+            await _service.UpdateAsync(model);
 
             return Ok();
         }

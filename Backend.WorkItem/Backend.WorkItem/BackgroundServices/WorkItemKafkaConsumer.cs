@@ -71,6 +71,20 @@ namespace Backend.WorkItem.BackgroundServices
                                 await db.KeyDeleteAsync(CacheListKey);
                                 break;
                             }
+                        case "update":
+                            {
+                                var item = new Model.WorkItem
+                                {
+                                    Id = (int)msg.Id!,
+                                    Title = msg.Title,
+                                    Description = msg.Description
+                                };
+                                await repo.UpdateAsync(item);
+
+                                await db.KeyDeleteAsync($"WorkItems:{item.Id}");
+                                await db.KeyDeleteAsync(CacheListKey);
+                                break;
+                            }
                     }
 
                     consumer.Commit(consumerResult);

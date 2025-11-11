@@ -13,12 +13,13 @@ namespace Backend.WorkItem.Service.WorkItem
         private readonly IDatabase _redis;
         private readonly IProducer<Null, string> _producer;
 
+        private const string Topic = "workitem-events";
         private const string CacheListKey = "WorkItems:List";
 
         public WorkItemService(
             IWorkItemRepository repo,
             IRedisConnection redis,
-            IProducer<Null,string> producer)
+            IProducer<Null, string> producer)
         {
             _repo = repo;
             _redis = redis.Database;
@@ -74,21 +75,27 @@ namespace Backend.WorkItem.Service.WorkItem
                 Description = item.Description
             };
 
-            await PublishAsync("workitem-events", msg);
+            await PublishAsync(msg);
 
             await _redis.KeyDeleteAsync(CacheListKey);
         }
 
-        public async Task<bool> UpdateAsync(Model.WorkItem item)
+        public async Task UpdateAsync(Model.WorkItem item)
         {
             item.Title = item.Title!.Trim();
 
-            var isUpdate = await _repo.UpdateAsync(item);
+            var msg = new Model.WorkItemKafkaMessage
+            {
+                Operation = "update",
+                Id = item.Id,
+                Title = item.Title,
+                Description = item.Description
+            };
+
+            await PublishAsync(msg);
 
             await _redis.KeyDeleteAsync(CacheListKey);
             await _redis.KeyDeleteAsync($"WorkItems:{item.Id}");
-
-            return isUpdate;
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -101,10 +108,10 @@ namespace Backend.WorkItem.Service.WorkItem
             return isDelete;
         }
 
-        private async Task PublishAsync(string topic, Model.WorkItemKafkaMessage msg)
+        private async Task PublishAsync(Model.WorkItemKafkaMessage msg)
         {
-            var json= JsonSerializer.Serialize(msg);
-            await _producer.ProduceAsync(topic, new Message<Null, string> { Value = json }); 
+            var json = JsonSerializer.Serialize(msg);
+            await _producer.ProduceAsync(Topic, new Message<Null, string> { Value = json });
         }
     }
 }

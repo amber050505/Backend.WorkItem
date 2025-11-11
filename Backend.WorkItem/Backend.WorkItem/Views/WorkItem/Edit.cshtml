@@ -45,11 +45,11 @@ $(function(){
             },
             data: data,
             success: function () {
-                alert('更新成功');
+                alert('已送出更新請求');
                 window.location.href = '/WorkItem/List';
             },
             error: function (xhr) {
-                alert(xhr.responseText);
+                alert('更新失敗');
             }
         });
     });
