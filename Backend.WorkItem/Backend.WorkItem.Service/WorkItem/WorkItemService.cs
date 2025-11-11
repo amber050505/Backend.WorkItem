@@ -98,14 +98,17 @@ namespace Backend.WorkItem.Service.WorkItem
             await _redis.KeyDeleteAsync($"WorkItems:{item.Id}");
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            var isDelete = await _repo.DeleteAsync(id);
+            var msg = new Model.WorkItemKafkaMessage
+            {
+                Operation = "delete",
+                Id = id
+            };
+            await PublishAsync(msg);
 
             await _redis.KeyDeleteAsync(CacheListKey);
             await _redis.KeyDeleteAsync($"WorkItems:{id}");
-
-            return isDelete;
         }
 
         private async Task PublishAsync(Model.WorkItemKafkaMessage msg)

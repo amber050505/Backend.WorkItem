@@ -55,11 +55,11 @@ $(function () {
                 'RequestVerificationToken': token
             },
             success: function () {
-                alert('刪除成功');
+                alert('已送出刪除請求');
                 btn.closest('tr').remove();
             },
             error: function (xhr) {
-                alert(xhr.responseText);
+                alert('刪除失敗');
             }
         });
     });

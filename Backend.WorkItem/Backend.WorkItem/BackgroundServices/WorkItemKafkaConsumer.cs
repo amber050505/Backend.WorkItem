@@ -81,8 +81,15 @@ namespace Backend.WorkItem.BackgroundServices
                                 };
                                 await repo.UpdateAsync(item);
 
-                                await db.KeyDeleteAsync($"WorkItems:{item.Id}");
                                 await db.KeyDeleteAsync(CacheListKey);
+                                await db.KeyDeleteAsync($"WorkItems:{item.Id}");
+                                break;
+                            }
+                        case "delete":
+                            {
+                                await repo.DeleteAsync((int)msg.Id!);
+                                await db.KeyDeleteAsync(CacheListKey);
+                                await db.KeyDeleteAsync($"WorkItems:{msg.Id}");
                                 break;
                             }
                     }

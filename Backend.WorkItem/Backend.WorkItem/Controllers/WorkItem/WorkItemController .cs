@@ -63,13 +63,10 @@ namespace Backend.WorkItem.Controllers.WorkItem
 
         // Delete: Delete /WorkItem/{id}
         [HttpDelete("{id:int}")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var isDelete = await _service.DeleteAsync(id);
-            if (!isDelete)
-                return BadRequest("刪除失敗");
-
+            await _service.DeleteAsync(id);
             return Ok();
         }
     }

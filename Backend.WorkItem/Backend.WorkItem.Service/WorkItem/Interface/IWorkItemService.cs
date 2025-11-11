@@ -6,6 +6,6 @@
         Task<Model.WorkItem> GetByIdAsync(int id);
         Task CreateAsync(Model.WorkItem item);
         Task UpdateAsync(Model.WorkItem item);
-        Task<bool> DeleteAsync(int id);
+        Task DeleteAsync(int id);
     }
 }
