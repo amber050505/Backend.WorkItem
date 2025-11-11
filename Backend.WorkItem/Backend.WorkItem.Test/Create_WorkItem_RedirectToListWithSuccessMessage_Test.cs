@@ -27,7 +27,6 @@ namespace Backend.WorkItem.Test
         public async Task Create_WorkItem_RedirectToListWithSuccessMessage()
         {
             var model = new Model.WorkItem { Title = "Test Title" };
-            _mockService.Setup(service => service.CreateAsync(It.Is<Model.WorkItem>(item => item.Title != "")));
 
             var result = await _controller.New(model) as RedirectToActionResult;
 
