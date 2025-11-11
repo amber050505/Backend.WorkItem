@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="2.12.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Backend.WorkItem.Model\Backend.WorkItem.Model.csproj" />
     <ProjectReference Include="..\Backend.WorkItem.Repository\Backend.WorkItem.Repository.csproj" />
   </ItemGroup>

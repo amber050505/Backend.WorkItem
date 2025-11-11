@@ -11,7 +11,7 @@ namespace Backend.WorkItem.Service.WorkItem
     {
         private readonly IWorkItemRepository _repo;
         private readonly IDatabase _redis;
-        private readonly IProducer<Null, string> _producer;
+        private readonly IKafkaConnection _kafka;
 
         private const string Topic = "workitem-events";
         private const string CacheListKey = "WorkItems:List";
@@ -19,11 +19,11 @@ namespace Backend.WorkItem.Service.WorkItem
         public WorkItemService(
             IWorkItemRepository repo,
             IRedisConnection redis,
-            IProducer<Null, string> producer)
+            IKafkaConnection kafka)
         {
             _repo = repo;
             _redis = redis.Database;
-            _producer = producer;
+            _kafka = kafka;
         }
 
         public async Task<IEnumerable<Model.WorkItem>> GetAllAsync()
@@ -114,7 +114,7 @@ namespace Backend.WorkItem.Service.WorkItem
         private async Task PublishAsync(Model.WorkItemKafkaMessage msg)
         {
             var json = JsonSerializer.Serialize(msg);
-            await _producer.ProduceAsync(Topic, new Message<Null, string> { Value = json });
+            await _kafka.Producer.ProduceAsync(Topic, new Message<Null, string> { Value = json });
         }
     }
 }

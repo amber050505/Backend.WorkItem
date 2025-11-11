@@ -20,15 +20,7 @@ namespace Backend.WorkItem
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSingleton<IRedisConnection, RedisConnection>();
-            builder.Services.AddSingleton<IProducer<Null, string>>(sp =>
-            {
-                var kafkaBootstrap = builder.Configuration["Kafka:BootstrapServers"];
-                var config = new ProducerConfig
-                {
-                    BootstrapServers = kafkaBootstrap
-                };
-                return new ProducerBuilder<Null, string>(config).Build();
-            });
+            builder.Services.AddSingleton<IKafkaConnection, KafkaConnection>();
             builder.Services.AddSingleton<IConnectionString, ConnectionString>();
             builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
             builder.Services.AddScoped<IWorkItemService, WorkItemService>();
