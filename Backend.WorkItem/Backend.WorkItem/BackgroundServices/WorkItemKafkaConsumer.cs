@@ -1,7 +1,6 @@
 ﻿using Backend.WorkItem.Repository.Utility.Interface;
 using Backend.WorkItem.Repository.WorkItem.Interface;
 using Confluent.Kafka;
-using StackExchange.Redis;
 using System.Text.Json;
 
 namespace Backend.WorkItem.BackgroundServices
