@@ -14,28 +14,28 @@ namespace Backend.WorkItem.Controllers.WorkItem
         public async Task<IActionResult> List()
         {
             var items = await _service.GetAllAsync();
-            return View("List", items);
+            return View(items);
         }
 
         // New: GET /WorkItem
         [HttpGet()]
         public IActionResult New()
         {
-            return View("New", new Model.WorkItem());
+            return View(new Model.WorkItem());
         }
 
-        // Create: POST /WorkItem
+        // New: POST /WorkItem
         [HttpPost()]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Model.WorkItem model)
+        public async Task<IActionResult> New(Model.WorkItem model)
         {
             if (!ModelState.IsValid)
             {
-                return View("New", model);
+                return View(model);
             }
             await _service.CreateAsync(model);
             TempData["SuccessMessage"] = "已送出新增請求（由背景服務寫入）";
-            return RedirectToAction("List");
+            return RedirectToAction(nameof(List));
         }
 
         // Edit: GET /WorkItem/{id}
@@ -44,13 +44,13 @@ namespace Backend.WorkItem.Controllers.WorkItem
         {
             var item = await _service.GetByIdAsync(id);
             if (item == null) return NotFound();
-            return View("Edit", item);
+            return View(item);
         }
 
-        // Update: PUT /WorkItem/{id}
+        // Edit: PUT /WorkItem/{id}
         [HttpPut("{id:int}")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(int id, Model.WorkItem model)
+        public async Task<IActionResult> Edit(int id, Model.WorkItem model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
