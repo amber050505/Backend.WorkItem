@@ -27,7 +27,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
         // New: POST /WorkItem
         [HttpPost()]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> New(Model.WorkItem model)
+        public async Task<IActionResult> New([FromForm] Model.WorkItem model)
         {
             if (!ModelState.IsValid)
             {
@@ -40,7 +40,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
 
         // Edit: GET /WorkItem/{id}
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var item = await _service.GetByIdAsync(id);
             if (item == null) return NotFound();
@@ -50,7 +50,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
         // Edit: PUT /WorkItem/{id}
         [HttpPut("{id:int}")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Model.WorkItem model)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] Model.WorkItem model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -64,7 +64,7 @@ namespace Backend.WorkItem.Controllers.WorkItem
         // Delete: Delete /WorkItem/{id}
         [HttpDelete("{id:int}")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             await _service.DeleteAsync(id);
             return Ok();

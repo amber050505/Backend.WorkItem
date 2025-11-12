@@ -35,7 +35,6 @@ $(function(){
 
         const id = $(this).find('[type=submit]').data('id');
         const token = $('input[name="__RequestVerificationToken"]').val();
-        const data = $(this).serialize();
     
         $.ajax({
             url: `/WorkItem/${id}`,
@@ -43,7 +42,11 @@ $(function(){
             headers: {
                 'RequestVerificationToken': token
             },
-            data: data,
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                Title: $('#Title').val(),
+                Description: $('#Description').val()
+            }),
             success: function () {
                 alert('已送出更新請求');
                 window.location.href = '/WorkItem/List';
