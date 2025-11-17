@@ -24,6 +24,7 @@ namespace Backend.WorkItem
             builder.Services.AddScoped<IWorkItemRepository, WorkItemRepository>();
             builder.Services.AddScoped<IWorkItemService, WorkItemService>();
             builder.Services.AddHostedService<WorkItemKafkaConsumer>();
+            builder.Services.AddMemoryCache();
 
             var app = builder.Build();
 

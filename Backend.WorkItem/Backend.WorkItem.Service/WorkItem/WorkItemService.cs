@@ -3,6 +3,7 @@ using Backend.WorkItem.Repository.Utility.Interface;
 using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem.Interface;
 using Confluent.Kafka;
+using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -13,35 +14,34 @@ namespace Backend.WorkItem.Service.WorkItem
         private readonly IWorkItemRepository _repo;
         private readonly IDatabase _redis;
         private readonly IKafkaConnection _kafka;
+        private readonly IMemoryCache _cache;
 
         private const string Topic = "workitem-events";
-        private const string CacheListKey = "WorkItems:List";
+        private const string WorkItemCacheKeys = "WorkItem_Cache_Keys";
 
         public WorkItemService(
             IWorkItemRepository repo,
             IRedisConnection redis,
-            IKafkaConnection kafka)
+            IKafkaConnection kafka,
+            IMemoryCache cache)
         {
             _repo = repo;
             _redis = redis.Database;
             _kafka = kafka;
+            _cache = cache;
         }
 
         public async Task<WorkItemList> GetAllAsync(int page)
         {
-            //var cached = await _redis.StringGetAsync(CacheListKey);
-            //if (!cached.IsNullOrEmpty)
-            //{
-            //    return JsonSerializer.Deserialize<IEnumerable<Model.WorkItem>>(cached!)!;
-            //}
+            string cacheKey = $"WorkItem_Page_{page}";
 
-            var result = await _repo.GetAllAsync(page);
-            //if (list.Any())
-            //{
-            //    var json = JsonSerializer.Serialize(list);
-            //    await _redis.StringSetAsync(CacheListKey, json, TimeSpan.FromMinutes(1));
-            //}
-            //return list;
+            if (!_cache.TryGetValue(cacheKey, out WorkItemList result))
+            {
+                result = await _repo.GetAllAsync(page);
+                _cache.Set(cacheKey, result, TimeSpan.FromMinutes(10));
+                AddWorkItemCacheKey(cacheKey);
+            }
+
             return result;
         }
 
@@ -79,7 +79,7 @@ namespace Backend.WorkItem.Service.WorkItem
 
             await PublishAsync(msg);
 
-            await _redis.KeyDeleteAsync(CacheListKey);
+            //await _redis.KeyDeleteAsync(CacheListKey);
         }
 
         public async Task UpdateAsync(Model.WorkItem item)
@@ -96,7 +96,7 @@ namespace Backend.WorkItem.Service.WorkItem
 
             await PublishAsync(msg);
 
-            await _redis.KeyDeleteAsync(CacheListKey);
+            //await _redis.KeyDeleteAsync(CacheListKey);
             await _redis.KeyDeleteAsync($"WorkItems:{item.Id}");
         }
 
@@ -109,7 +109,7 @@ namespace Backend.WorkItem.Service.WorkItem
             };
             await PublishAsync(msg);
 
-            await _redis.KeyDeleteAsync(CacheListKey);
+            //await _redis.KeyDeleteAsync(CacheListKey);
             await _redis.KeyDeleteAsync($"WorkItems:{id}");
         }
 
@@ -117,6 +117,23 @@ namespace Backend.WorkItem.Service.WorkItem
         {
             var json = JsonSerializer.Serialize(msg);
             await _kafka.Producer.ProduceAsync(Topic, new Message<Null, string> { Value = json });
+        }
+
+        private void AddWorkItemCacheKey(string key)
+        {
+            var options = new MemoryCacheEntryOptions
+            {
+                SlidingExpiration = TimeSpan.FromMinutes(10)
+            };
+
+            if (!_cache.TryGetValue(WorkItemCacheKeys, out HashSet<string> keys))
+            {
+                keys = new HashSet<string>();
+            }
+
+            keys.Add(key);
+
+            _cache.Set(WorkItemCacheKeys, keys, options);
         }
     }
 }

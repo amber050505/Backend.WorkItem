@@ -1,6 +1,7 @@
 ﻿using Backend.WorkItem.Repository.Utility.Interface;
 using Backend.WorkItem.Repository.WorkItem.Interface;
 using Confluent.Kafka;
+using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
 
 namespace Backend.WorkItem.BackgroundServices
@@ -9,18 +10,21 @@ namespace Backend.WorkItem.BackgroundServices
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IRedisConnection _redis;
+        private readonly IMemoryCache _cache;
         private readonly ConsumerConfig _config;
 
         private const string Topic = "workitem-events";
-        private const string CacheListKey = "WorkItems:List";
+        private const string CacheIndexKey = "WorkItem_Cache_Keys";
 
         public WorkItemKafkaConsumer(
             IServiceProvider serviceProvider,
             IRedisConnection redis,
+            IMemoryCache cache,
             IConfiguration configuration)
         {
             _serviceProvider = serviceProvider;
             _redis = redis;
+            _cache = cache;
             _config = new ConsumerConfig()
             {
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
@@ -67,7 +71,7 @@ namespace Backend.WorkItem.BackgroundServices
                                 };
                                 var newId = await repo.CreateAsync(item);
 
-                                await db.KeyDeleteAsync(CacheListKey);
+                                ClearWorkItemCache();
                                 break;
                             }
                         case "update":
@@ -80,14 +84,15 @@ namespace Backend.WorkItem.BackgroundServices
                                 };
                                 await repo.UpdateAsync(item);
 
-                                await db.KeyDeleteAsync(CacheListKey);
+                                ClearWorkItemCache();
                                 await db.KeyDeleteAsync($"WorkItems:{item.Id}");
                                 break;
                             }
                         case "delete":
                             {
                                 await repo.DeleteAsync((int)msg.Id!);
-                                await db.KeyDeleteAsync(CacheListKey);
+
+                                ClearWorkItemCache();
                                 await db.KeyDeleteAsync($"WorkItems:{msg.Id}");
                                 break;
                             }
@@ -98,6 +103,18 @@ namespace Backend.WorkItem.BackgroundServices
 
                 consumer.Close();
             }, stoppingToken);
+        }
+
+        private void ClearWorkItemCache()
+        {
+            if (_cache.TryGetValue(CacheIndexKey, out HashSet<string> keys))
+            {
+                foreach (var key in keys)
+                {
+                    _cache.Remove(key);
+                }
+                _cache.Remove(CacheIndexKey);
+            }
         }
     }
 }
