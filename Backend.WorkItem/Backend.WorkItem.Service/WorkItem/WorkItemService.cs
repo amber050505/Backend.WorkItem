@@ -78,8 +78,6 @@ namespace Backend.WorkItem.Service.WorkItem
             };
 
             await PublishAsync(msg);
-
-            //await _redis.KeyDeleteAsync(CacheListKey);
         }
 
         public async Task UpdateAsync(Model.WorkItem item)
@@ -96,7 +94,6 @@ namespace Backend.WorkItem.Service.WorkItem
 
             await PublishAsync(msg);
 
-            //await _redis.KeyDeleteAsync(CacheListKey);
             await _redis.KeyDeleteAsync($"WorkItems:{item.Id}");
         }
 
@@ -109,7 +106,6 @@ namespace Backend.WorkItem.Service.WorkItem
             };
             await PublishAsync(msg);
 
-            //await _redis.KeyDeleteAsync(CacheListKey);
             await _redis.KeyDeleteAsync($"WorkItems:{id}");
         }
 
