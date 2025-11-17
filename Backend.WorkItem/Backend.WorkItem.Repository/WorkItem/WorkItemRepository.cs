@@ -21,10 +21,7 @@ namespace Backend.WorkItem.Repository.WorkItem
         {
             using var db = CreateConnection();
 
-            var multi= await db.QueryMultipleAsync(
-                "dbo.sp_WorkItem_GetAll",
-                new { PageNumber = page, SortOrder = "DESC" },
-                commandType: CommandType.StoredProcedure);
+            var multi = await db.QueryMultipleAsync("dbo.sp_WorkItem_GetAll", new { PageNumber = page }, commandType: CommandType.StoredProcedure);
 
             var items = (await multi.ReadAsync<Model.WorkItem>()).ToList();
             int totalPages = await multi.ReadFirstAsync<int>();
