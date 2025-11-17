@@ -14,7 +14,7 @@ namespace Backend.WorkItem.BackgroundServices
         private readonly ConsumerConfig _config;
 
         private const string Topic = "workitem-events";
-        private const string CacheIndexKey = "WorkItem_Cache_Keys";
+        private const string WorkItemCacheKeys = "WorkItem_Cache_Keys";
 
         public WorkItemKafkaConsumer(
             IServiceProvider serviceProvider,
@@ -107,13 +107,13 @@ namespace Backend.WorkItem.BackgroundServices
 
         private void ClearWorkItemCache()
         {
-            if (_cache.TryGetValue(CacheIndexKey, out HashSet<string> keys))
+            if (_cache.TryGetValue(WorkItemCacheKeys, out HashSet<string> keys))
             {
                 foreach (var key in keys)
                 {
                     _cache.Remove(key);
                 }
-                _cache.Remove(CacheIndexKey);
+                _cache.Remove(WorkItemCacheKeys);
             }
         }
     }
