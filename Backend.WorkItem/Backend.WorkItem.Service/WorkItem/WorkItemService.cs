@@ -1,4 +1,5 @@
-﻿using Backend.WorkItem.Repository.Utility.Interface;
+﻿using Backend.WorkItem.Model;
+using Backend.WorkItem.Repository.Utility.Interface;
 using Backend.WorkItem.Repository.WorkItem.Interface;
 using Backend.WorkItem.Service.WorkItem.Interface;
 using Confluent.Kafka;
@@ -26,21 +27,22 @@ namespace Backend.WorkItem.Service.WorkItem
             _kafka = kafka;
         }
 
-        public async Task<IEnumerable<Model.WorkItem>> GetAllAsync()
+        public async Task<WorkItemList> GetAllAsync(int page)
         {
-            var cached = await _redis.StringGetAsync(CacheListKey);
-            if (!cached.IsNullOrEmpty)
-            {
-                return JsonSerializer.Deserialize<IEnumerable<Model.WorkItem>>(cached!)!;
-            }
+            //var cached = await _redis.StringGetAsync(CacheListKey);
+            //if (!cached.IsNullOrEmpty)
+            //{
+            //    return JsonSerializer.Deserialize<IEnumerable<Model.WorkItem>>(cached!)!;
+            //}
 
-            var list = await _repo.GetAllAsync();
-            if (list.Any())
-            {
-                var json = JsonSerializer.Serialize(list);
-                await _redis.StringSetAsync(CacheListKey, json, TimeSpan.FromMinutes(1));
-            }
-            return list;
+            var result = await _repo.GetAllAsync(page);
+            //if (list.Any())
+            //{
+            //    var json = JsonSerializer.Serialize(list);
+            //    await _redis.StringSetAsync(CacheListKey, json, TimeSpan.FromMinutes(1));
+            //}
+            //return list;
+            return result;
         }
 
         public async Task<Model.WorkItem> GetByIdAsync(int id)

@@ -11,10 +11,10 @@ namespace Backend.WorkItem.Controllers.WorkItem
 
         // List: GET /WorkItem/List
         [HttpGet("List")]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List([FromQuery] int page = 1)
         {
-            var items = await _service.GetAllAsync();
-            return View(items);
+            var result = await _service.GetAllAsync(page);
+            return View(result);
         }
 
         // New: GET /WorkItem

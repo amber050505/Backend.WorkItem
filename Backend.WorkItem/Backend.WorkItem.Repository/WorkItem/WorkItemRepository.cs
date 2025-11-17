@@ -1,9 +1,8 @@
-﻿using Backend.WorkItem.Repository.Utility;
+﻿using Backend.WorkItem.Model;
 using Backend.WorkItem.Repository.Utility.Interface;
 using Backend.WorkItem.Repository.WorkItem.Interface;
 using Dapper;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System.Data;
 
 namespace Backend.WorkItem.Repository.WorkItem
@@ -18,10 +17,24 @@ namespace Backend.WorkItem.Repository.WorkItem
 
         private IDbConnection CreateConnection() => new SqlConnection(_connStr.DBConnString);
 
-        public async Task<IEnumerable<Model.WorkItem>> GetAllAsync()
+        public async Task<WorkItemList> GetAllAsync(int page)
         {
             using var db = CreateConnection();
-            return await db.QueryAsync<Model.WorkItem>("dbo.sp_WorkItem_GetAll", commandType: CommandType.StoredProcedure);
+
+            var multi= await db.QueryMultipleAsync(
+                "dbo.sp_WorkItem_GetAll",
+                new { PageNumber = page, SortOrder = "DESC" },
+                commandType: CommandType.StoredProcedure);
+
+            var items = (await multi.ReadAsync<Model.WorkItem>()).ToList();
+            int totalPages = await multi.ReadFirstAsync<int>();
+
+            return new WorkItemList
+            {
+                Items = items,
+                PageNumber = page,
+                TotalPages = totalPages
+            };
         }
 
         public async Task<Model.WorkItem?> GetByIdAsync(int id)
